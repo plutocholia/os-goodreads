@@ -1,6 +1,7 @@
 #include "Book.h"
 #include <string>
 #include <iostream>
+#include <iomanip>
 
 Book::Book(const std::vector<std::string>& data)
 {
@@ -11,6 +12,8 @@ Book::Book(const std::vector<std::string>& data)
     this->pages                 = std::atoi(data[4].c_str());
     this->author_name           = data[5];
     this->author_average_rating = std::atof(data[6].c_str());
+    this->total_num_of_likes    = 0;
+    this->numerator             = 0;
 }
 
 Book::~Book()
@@ -37,5 +40,10 @@ void Book::printBook(){
     std::cout << "Geners: " << this->gener_1 << ", " << this->gener_2 << std::endl;
     std::cout << "Number of Pages: " << this->pages << std::endl;
     std::cout << "Author: " << this->author_name << std::endl;
-    std::cout << "Average Rating: " << this->author_average_rating << std::endl;
+    std::cout << "Average Rating: " << std::setprecision(2) << this->getPopRate() << std::endl;
+}
+
+float Book::getPopRate(){
+    if(this->total_num_of_likes == 0) return 0.0;
+    else return (this->author_average_rating + (static_cast<float>(this->numerator)/this->total_num_of_likes))/10;
 }

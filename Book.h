@@ -15,11 +15,14 @@ private:
     float author_average_rating;
 
 public:
+    int total_num_of_likes;
+    int numerator;
     Book(const std::vector<std::string>&);
     bool ifIncludeGener(const std::string&);
     float getAuthorAverageRating();
     int getBookID();
     void printBook();
+    float getPopRate();
     ~Book();
 };
 
