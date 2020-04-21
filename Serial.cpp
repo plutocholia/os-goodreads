@@ -54,11 +54,8 @@ void Serial::run(){
                 int rating          = std::atoi(review[1].c_str());
                 int number_of_likes = std::atoi(review[2].c_str());
                 std::unordered_map<int, Book*>::iterator itr_book = books.find(book_id);
-                if(itr_book != books.end()){
-                    Book* temp = itr_book->second;
-                    temp->numerator += (rating * number_of_likes);
-                    temp->total_num_of_likes += number_of_likes;
-                }
+                if(itr_book != books.end())
+                    itr_book->second->updateRates(rating, number_of_likes);
             }
             line_number += 1;
         }
