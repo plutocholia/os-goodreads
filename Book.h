@@ -23,6 +23,7 @@ public:
     int getBookID();
     void printBook();
     float getPopRate();
+    void updateRates(int, int);
     ~Book();
 };
 

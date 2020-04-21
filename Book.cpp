@@ -47,3 +47,8 @@ float Book::getPopRate(){
     if(this->total_num_of_likes == 0) return 0.0;
     else return (this->author_average_rating + (static_cast<float>(this->numerator)/this->total_num_of_likes))/10;
 }
+
+void Book::updateRates(int rate, int number_of_like){
+    this->numerator += (rate * number_of_like);
+    this->total_num_of_likes += number_of_like;
+}
