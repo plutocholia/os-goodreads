@@ -1,5 +1,5 @@
-OBJECTS = main.o Serial.o Utills.o Book.o
-CC = g++ -std=c++11
+OBJECTS = main.o Serial.o Utills.o Book.o Parallel.o
+CC = g++ -std=c++11 -pthread
 
 all: main
 	make clean
@@ -18,6 +18,9 @@ Utills.o: Utills.h Utills.cpp
 
 Book.o: Book.h Book.cpp
 	$(CC) -c Book.cpp
+
+Parallel.o: Parallel.h Parallel.cpp
+	$(CC) -c Parallel.cpp
 
 clean:
 	rm *.o
