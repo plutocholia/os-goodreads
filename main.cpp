@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Serial.h"
+#include "Parallel.h"
 
 using namespace std;
 
@@ -9,7 +9,7 @@ int main(int argc, char const *argv[])
         cout << "enter the gener next time" << endl;
         exit(EXIT_FAILURE);
     }
-    Serial* serial = new Serial(argv[1]);
-    serial->run();    
+    Parallel* parallel = new Parallel(argv[1]);
+    parallel->run();   
     return 0;
 }
