@@ -16,13 +16,18 @@ public:
     static std::vector<std::string> all_books;
     static std::unordered_map<int, Book*> books;
     static pthread_mutex_t mut_books;
+    static char* data_reviews;
+    static std::vector<std::string> all_reviews;
 
     Parallel(const std::string&);
     void run();
-    void paraReadBooks();
+    static void* paraReadBooks(void*);
     void paraFilterBooks();
+    static void* paraReadReviews(void*);
+    void readAllData();
     static void* readFromBooks(void*);
     static void* filterBooks(void*);
+    static void* readFromReviews(void*);
     ~Parallel();
 };
 
