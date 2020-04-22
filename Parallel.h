@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <pthread.h>
 #include "Book.h"
+#define NUMBER_OF_THREADS 4
 
 class Parallel
 {
@@ -24,11 +25,11 @@ public:
     static void* paraReadBooks(void*);
     void paraFilterBooks();
     static void* paraReadReviews(void*);
-    void readAllData();
+    void paraReadAllData();
     static void* readFromBooks(void*);
     static void* filterBooks(void*);
     static void* readFromReviews(void*);
-    ~Parallel();
+    ~Parallel();    
 };
 
 #endif // !PARALLEL_H

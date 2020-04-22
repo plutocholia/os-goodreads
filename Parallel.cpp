@@ -3,8 +3,8 @@
 #include <iostream>
 #include <vector>
 #include <pthread.h>
-
-#define NUMBER_OF_THREADS 4
+#include <string.h>
+#include <unistd.h>
 
 char* Parallel::data_book;
 std::vector<std::string> Parallel::all_books;
@@ -49,13 +49,17 @@ void* Parallel::filterBooks(void* input){
     int len     = data.first[2];
     std::string gener = data.second;
 
-    for(auto line : Parallel::all_books){
-        Book* book = new Book(Utills::splitBy(line, ","));
-        if(book->ifIncludeGener(gener)){
-            pthread_mutex_lock (&Parallel::mut_books);
-            Parallel::books.insert(std::make_pair(book->getBookID(), book));
-            pthread_mutex_unlock (&Parallel::mut_books);
+    size_t i = 0;
+    for(const auto& line : Parallel::all_books){
+        if(i != 0){
+            Book* book = new Book(Utills::splitBy(line, ","));
+            if(book->ifIncludeGener(gener)){
+                pthread_mutex_lock (&Parallel::mut_books);
+                Parallel::books.insert(std::make_pair(book->getBookID(), book));
+                pthread_mutex_unlock (&Parallel::mut_books);
+            }
         }
+        i++;
     }
 
     pthread_exit(NULL);
@@ -66,7 +70,7 @@ void* Parallel::readFromReviews(void* input){
     int tid     = data[0];
     int len     = data[1];
     int start   = data[2];
-    
+
     std::ifstream file;
     file.open(DIR_REVIEW);
     file.seekg(start);
@@ -74,8 +78,13 @@ void* Parallel::readFromReviews(void* input){
     file.read(buff, len);
     file.close();
 
-    for(int i = 0; i < len; i++)
-        Parallel::data_reviews[start + i] = buff[i];
+    for(int j = 0; j < len; j++)
+        Parallel::data_reviews[start + j] = buff[j];
+    
+    // std::cout << "thread number " << tid << std::endl;
+    // std::cout << "\t" << "start = " << start << " and len of : " << len << std::endl;
+    // std::cout << "\tbuff size: " << strlen(buff) << std::endl;
+    // std::cout << "\tdata_reviews size : " << strlen(data_reviews) << std::endl; 
     
     delete buff;
     pthread_exit(NULL);
@@ -89,7 +98,7 @@ void* Parallel::paraReadBooks(void*){
     int file_size = _file.tellg();
     _file.close();
     Parallel::data_book = new char[file_size];
-
+    std::cout << "Book.csv size in bytes: " << file_size << std::endl;
     pthread_t threads[NUMBER_OF_THREADS];
     
     int num_of_chunks = NUMBER_OF_THREADS;
@@ -98,8 +107,12 @@ void* Parallel::paraReadBooks(void*){
     for(int i = 0; i < NUMBER_OF_THREADS; i++){
         std::vector<int> param(3);
         param[0] = i;
-        param[1] = file_size / num_of_chunks;
-        param[2] = i * file_size / num_of_chunks;
+        param[2] = i * static_cast<int>(file_size / num_of_chunks);
+        if(i == NUMBER_OF_THREADS - 1)
+            param[1] = file_size - param[2];
+        else
+            param[1] = static_cast<int>(file_size / num_of_chunks);
+        
         params.push_back(param);
     }
 
@@ -116,11 +129,16 @@ void Parallel::paraFilterBooks(){
     pthread_t threads[NUMBER_OF_THREADS];
 
     std::vector<std::pair<std::vector<int>, std::string> > params;
+    int size = Parallel::all_books.size();
+    int len = static_cast<int>(size / NUMBER_OF_THREADS);
+
     for(int i = 0; i < NUMBER_OF_THREADS; i++){
         std::pair<std::vector<int>, std::string> param;
         param.first.push_back(i);
-        param.first.push_back(i * Parallel::all_books.size() / NUMBER_OF_THREADS);
-        param.first.push_back(Parallel::all_books.size() / NUMBER_OF_THREADS);
+        param.first.push_back(i * len);
+        if(i == NUMBER_OF_THREADS - 1)
+            param.first.push_back(size - i*len);
+        else param.first.push_back(len);
         param.second = this->gener;
         params.push_back(param);
     }
@@ -152,8 +170,12 @@ void* Parallel::paraReadReviews(void*){
     for(int i = 0; i < NUMBER_OF_THREADS; i++){
         std::vector<int> param(3);
         param[0] = i;
-        param[1] = file_size / num_of_chunks;
-        param[2] = i * file_size / num_of_chunks;
+        param[2] = i * static_cast<int>(file_size / num_of_chunks);
+        if(i == NUMBER_OF_THREADS - 1)
+            param[1] = file_size - param[2];
+        else
+            param[1] = static_cast<int>(file_size / num_of_chunks);
+        
         params.push_back(param);
     }
 
@@ -166,7 +188,7 @@ void* Parallel::paraReadReviews(void*){
     pthread_exit(NULL);
 }
 
-void Parallel::readAllData(){
+void Parallel::paraReadAllData(){
     pthread_t th1, th2;
     pthread_create(&th1, NULL, &Parallel::paraReadBooks, NULL);
     pthread_create(&th2, NULL, &Parallel::paraReadReviews, NULL);
@@ -175,27 +197,32 @@ void Parallel::readAllData(){
 }
 
 void Parallel::run(){
-    this->readAllData();
-    // this->paraReadBooks();
-    // Parallel::all_books = Utills::splitBy(Parallel::data_book, "\n");
-    // std::cout << "Number of Books Record: " << Parallel::all_books.size() << std::endl;
+    this->paraReadAllData();
+    // Utills::splitByRef(Parallel::all_books, Parallel::data_book, "\n");
+    // Utills::splitByRef(Parallel::all_reviews, Parallel::data_reviews, "\n");
     // this->paraFilterBooks();
-    // std::cout << "Number of Filterd Results: " << Parallel::books.size() << std::endl;
-    // this->paraReadReviews();
-    // // Parallel::all_reviews = Utills::splitBy(Parallel::data_reviews, "\n");
-    // std::cout << "Number of Reviews Record: " << Parallel::all_reviews.size() << std::endl;
+    
+    // Book* max_book = NULL;
+    // float max_pop  = -1;
 
-
-
-    // std::cout << Parallel::data_book;
-    // int nch = 10;
-    // for(int i = 0; i < nch; i++){
-    //     std::ifstream file1;
-    //     file1.open("./datasets/test.csv");
-    //     file1.seekg(i * file_size / nch);
-    //     char* buff1 = new char[file_size];
-    //     file1.read(buff1, file_size / nch);
-    //     file1.close();
-    //     std::cout << "[" << buff1 << "]" << std::endl;
+    // size_t i = 0;
+    // for(auto line : all_reviews){
+    //     if(i != 0 && line.size() != 0){        
+    //         std::vector<std::string> review = Utills::splitBy(line, ",");
+    //         int book_id         = std::atoi(review[0].c_str());
+    //         int rating          = std::atoi(review[1].c_str());
+    //         int number_of_likes = std::atoi(review[2].c_str());
+    //         std::unordered_map<int, Book*>::iterator itr_book = books.find(book_id);
+    //         if(itr_book != books.end())
+    //             itr_book->second->updateRates(rating, number_of_likes);
+    //     }
+    //     i += 1;
     // }
+    // for(auto item : books){
+    //     if(item.second->getPopRate() > max_pop){
+    //         max_book = item.second;
+    //         max_pop = item.second->getPopRate();
+    //     }
+    // }
+    // max_book->printBook();
 }
