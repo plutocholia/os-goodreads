@@ -16,6 +16,23 @@ std::vector<std::string> Utills::splitBy(std::string str, const std::string& del
     return extracted;
 }
 
+void Utills::splitByRef(
+        std::vector<std::string>& output,
+        const std::string& str, const std::string& delimiter)
+{
+    size_t start = 0;
+    size_t end = str.find_first_of(delimiter);
+        
+    while (end <= std::string::npos){
+	    output.push_back(str.substr(start, end-start));
+
+	    if (end == std::string::npos) break;
+
+    	start = end + 1;
+    	end = str.find_first_of(delimiter, start);
+    }
+}
+
 void Utills::printStringVector(const std::vector<std::string>& vec){
     std::cout<<"["<<std::endl;
     for(int i=0; i<vec.size(); i++){
