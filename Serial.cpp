@@ -36,17 +36,41 @@ void Serial::readFiles(){
 }
 
 void Serial::parseBooks(){
-    std::vector<std::string> lines;
-    Utills::splitByRef(lines, this->data_books, "\n");
+    // std::vector<std::string> lines;
+    // Utills::splitByRef(lines, this->data_books, "\n");
 
-    for(auto& line : lines){
-        if(line.size() < 1) continue;
-        std::vector<std::string> temp;
-        Utills::splitByRef(temp, line, ",");
-        Book* book = new Book(temp);
-        if(book->ifIncludeGener(gener)){
-            this->books.insert(std::make_pair(book->getBookID(), book));
+    // for(auto& line : lines){
+    //     if(line.size() < 1) continue;
+    //     std::vector<std::string> temp;
+    //     Utills::splitByRef(temp, line, ",");
+    //     Book* book = new Book(temp);
+    //     if(book->ifIncludeGener(gener)){
+    //         this->books.insert(std::make_pair(book->getBookID(), book));
+    //     }
+    // }
+
+    // ------------------------------- V2 ----------------------------------
+
+    std::string data_scope("");
+    std::vector<std::string> item;
+    int i = 0;
+    while(this->data_books[i] != '\n') i++;
+    i++;
+    for(; i < this->size_books; i++){
+        if(this->data_books[i] == ','){
+            item.push_back(data_scope);
+            data_scope = "";
         }
+        else if(this->data_books[i] == '\n'){
+            item.push_back(data_scope);
+            Book* book = new Book(item);
+            if(book->ifIncludeGener(gener))
+                this->books.insert(std::make_pair(book->getBookID(), book));
+            data_scope = "";
+            item.clear();
+        } 
+        else
+            data_scope += this->data_books[i];
     }
 }
 
