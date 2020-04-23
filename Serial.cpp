@@ -51,20 +51,26 @@ void Serial::parseBooks(){
 }
 
 void Serial::parseReviews(){
-    std::vector<std::string> lines;
-    Utills::splitByRef(lines, this->data_reviews, "\n");
-
-    for(auto& line : lines){
-        if(line.size() < 1){
-            continue;
+    std::string data_scope("");
+    int scope = 0;
+    int* item = new int[3];
+    int i = 0;
+    while(this->data_reviews[i] != '\n') i++;
+    i++;
+    for(; i < this->size_reviews; i++){
+        if(this->data_reviews[i] == ','){
+            item[scope++] = std::stoi(data_scope.c_str());
+            data_scope = "";
         }
-        std::vector<std::string> review;
-        Utills::splitByRef(review, line, ",");
-        int* payload = new int[3];
-        payload[0] = std::atoi(review[0].c_str());
-        payload[1] = std::atoi(review[1].c_str());
-        payload[2] = std::atoi(review[2].c_str());
-        this->reviews.push_back(payload);
+        else if(this->data_reviews[i] == '\n'){
+            item[scope] = std::stod(data_scope.c_str());
+            scope = 0;
+            this->reviews.push_back(item);
+            item = new int[3];
+            data_scope = "";
+        } 
+        else
+            data_scope += this->data_reviews[i];
     }
 }
 
