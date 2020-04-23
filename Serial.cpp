@@ -36,8 +36,22 @@ void Serial::readFiles(){
     std::cout << strlen(this->data_books) << " " << strlen(this->data_reviews) << std::endl;
 }
 
+void Serial::parseBooks(){
+    std::vector<std::string> lines;
+    Utills::splitByRef(lines, this->data_books, "\n");
 
+    for(auto& line : lines){
+        if(line.size() < 1) continue;
+        std::vector<std::string> temp;
+        Utills::splitByRef(temp, line, ",");
+        Book* book = new Book(temp);
+        if(book->ifIncludeGener(gener)){
+            this->books.insert(std::make_pair(book->getBookID(), book));
+        }
+    }
+}
 
 void Serial::run(){
-    this->readFiles();  
+    this->readFiles();
+    this->parseBooks();  
 }
