@@ -19,6 +19,9 @@ public:
     static pthread_mutex_t mut_books;
     static char* data_reviews;
     static std::vector<std::string> all_reviews;
+    static size_t size_books;
+    static size_t size_reviews;
+    static std::vector<std::vector<int> > reviews[NUMBER_OF_THREADS];
 
     Parallel(const std::string&);
     void run();
@@ -29,6 +32,11 @@ public:
     static void* readFromBooks(void*);
     static void* filterBooks(void*);
     static void* readFromReviews(void*);
+    void paraParseBooks();
+    static void* parseBooks(void*);
+    static int niceByte(char*, int);
+    static void* parseReviews(void*);
+    void paraParseReviews();
     ~Parallel();    
 };
 
