@@ -51,7 +51,26 @@ void Serial::parseBooks(){
     }
 }
 
+void Serial::parseReviews(){
+    std::vector<std::string> lines;
+    Utills::splitByRef(lines, this->data_reviews, "\n");
+
+    for(auto& line : lines){
+        if(line.size() < 1){
+            continue;
+        }
+        std::vector<std::string> review;
+        Utills::splitByRef(review, line, ",");
+        std::vector<int> payload(3);
+        payload[0] = std::atoi(review[0].c_str());
+        payload[1] = std::atoi(review[1].c_str());
+        payload[2] = std::atoi(review[2].c_str());
+        this->reviews.push_back(payload);
+    }
+}
+
 void Serial::run(){
     this->readFiles();
     this->parseBooks();  
+    this->parseReviews();
 }
