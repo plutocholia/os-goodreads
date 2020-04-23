@@ -15,6 +15,10 @@ public:
     static std::vector<std::string> splitBy(
         std::string, const std::string&
     );
+    static void splitByRef(
+        std::vector<std::string>&,
+        const std::string&, const std::string&
+    );
     static void printStringVector(
         const std::vector<std::string>& vec
     );
