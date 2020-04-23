@@ -33,7 +33,6 @@ void Serial::readFiles(){
     this->data_reviews = new char[this->size_reviews];
     _file.read(this->data_reviews, this->size_reviews);
     _file.close();
-    std::cout << strlen(this->data_books) << " " << strlen(this->data_reviews) << std::endl;
 }
 
 void Serial::parseBooks(){
@@ -69,8 +68,29 @@ void Serial::parseReviews(){
     }
 }
 
+void Serial::findBestBook(){
+    
+    for(auto& line : reviews){
+        std::unordered_map<int, Book*>::iterator itr_book = this->books.find(line[0]);
+        if(itr_book != books.end())
+            itr_book->second->updateRates(line[1], line[2]);
+    }
+    
+    Book* max_book = NULL;
+    float max_pop  = -1;
+    for(auto& item : books){
+        if(item.second->getPopRate() > max_pop){
+            max_book = item.second;
+            max_pop = item.second->getPopRate();
+        }
+    }
+    
+    max_book->printBook();
+}
+
 void Serial::run(){
     this->readFiles();
     this->parseBooks();  
     this->parseReviews();
+    this->findBestBook();
 }
