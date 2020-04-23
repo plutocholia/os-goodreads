@@ -60,7 +60,7 @@ void Serial::parseReviews(){
         }
         std::vector<std::string> review;
         Utills::splitByRef(review, line, ",");
-        std::vector<int> payload(3);
+        int* payload = new int[3];
         payload[0] = std::atoi(review[0].c_str());
         payload[1] = std::atoi(review[1].c_str());
         payload[2] = std::atoi(review[2].c_str());
@@ -84,7 +84,7 @@ void Serial::findBestBook(){
             max_pop = item.second->getPopRate();
         }
     }
-    
+
     max_book->printBook();
 }
 

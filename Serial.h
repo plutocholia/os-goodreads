@@ -9,7 +9,7 @@ class Serial
 private:
     std::string gener;
     std::unordered_map<int, Book*> books;
-    std::vector<std::vector<int> > reviews;
+    std::vector<int*> reviews;
     char* data_books;
     char* data_reviews;
     size_t size_books;

@@ -15,8 +15,8 @@ private:
     float author_average_rating;
 
 public:
-    int total_num_of_likes;
-    int numerator;
+    float total_num_of_likes;
+    float numerator;
     Book(const std::vector<std::string>&);
     bool ifIncludeGener(const std::string&);
     float getAuthorAverageRating();
