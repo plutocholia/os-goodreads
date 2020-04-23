@@ -21,7 +21,8 @@ public:
     static std::vector<std::string> all_reviews;
     static size_t size_books;
     static size_t size_reviews;
-    static std::vector<std::vector<int> > reviews[NUMBER_OF_THREADS];
+    // static std::vector<std::vector<int> > reviews[NUMBER_OF_THREADS];
+    static std::vector<int*> reviews[NUMBER_OF_THREADS];
 
     Parallel(const std::string&);
     void run();
