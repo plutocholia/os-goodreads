@@ -38,6 +38,7 @@ public:
     static int niceByte(char*, int);
     static void* parseReviews(void*);
     void paraParseReviews();
+    void findBestBook();
     ~Parallel();    
 };
 

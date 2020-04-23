@@ -395,18 +395,7 @@ void* Parallel::parseReviews(void* input){
     pthread_exit(NULL);
 }
 
-void Parallel::run(){
-    this->paraReadAllData();
-   
-
-    this->paraParseBooks();
-    this->paraParseReviews();
-
-    // std::cout << Parallel::books.size() << std::endl;
-    // for(int i = 0; i < NUMBER_OF_THREADS; i++){
-    //     std::cout << Parallel::reviews[i].size() << std::endl;
-    // }
-
+void Parallel::findBestBook(){
     for(int i = 0; i < NUMBER_OF_THREADS; i++){
         for(auto& line : reviews[i]){
             std::unordered_map<int, Book*>::iterator itr_book = Parallel::books.find(line[0]);
@@ -424,6 +413,21 @@ void Parallel::run(){
         }
     }
     max_book->printBook();
+}
+
+void Parallel::run(){
+    this->paraReadAllData();
+   
+
+    this->paraParseBooks();
+    this->paraParseReviews();
+    this->findBestBook();
+    // std::cout << Parallel::books.size() << std::endl;
+    // for(int i = 0; i < NUMBER_OF_THREADS; i++){
+    //     std::cout << Parallel::reviews[i].size() << std::endl;
+    // }
+
+    
 
   
 
