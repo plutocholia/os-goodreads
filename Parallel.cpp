@@ -180,7 +180,7 @@ void Parallel::paraParseBooks(){
     
     for(int i = 0; i < NUMBER_OF_THREADS; i++)
         pthread_join(threads[i], NULL);
-    
+    pthread_mutex_destroy(&Parallel::mut_books);
 }
 
 void* Parallel::parseBooks(void* input){
