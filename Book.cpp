@@ -1,7 +1,7 @@
 #include "Book.h"
 #include <string>
 #include <iostream>
-#include <iomanip>
+#include <cstdio>
 
 Book::Book(const std::vector<std::string>& data)
 {
@@ -37,10 +37,10 @@ int Book::getBookID(){
 void Book::printBook(){
     std::cout << "id: " << this->book_id << std::endl;
     std::cout << "Title: " << this->book_title << std::endl;
-    std::cout << "Geners: " << this->gener_1 << ", " << this->gener_2 << std::endl;
+    std::cout << "Genres: " << this->gener_1 << ", " << this->gener_2 << std::endl;
     std::cout << "Number of Pages: " << this->pages << std::endl;
     std::cout << "Author: " << this->author_name << std::endl;
-    std::cout << "Average Rating: " << std::setprecision(2) << this->getPopRate() << std::endl;
+    printf("Average Rating: %.2f\n", this->getPopRate());
 }
 
 float Book::getPopRate(){
